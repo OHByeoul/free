@@ -1,27 +1,52 @@
 package com.anything.free.controller;
 
+import com.anything.free.dto.FileDTO;
 import com.anything.free.service.FileService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.anything.free.util.MD5maker;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.File;
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 
 @Controller
 public class FileController {
-    @Autowired
-    private FileService fileService;
+    private final FileService fileService;
+
+    public FileController(FileService fileService) {
+        this.fileService = fileService;
+    }
 
     @PostMapping("/file/insertFile")
-    @ResponseBody
-    public Map<String,Object> insertFile(@RequestParam HashMap params){
-        Map<String,Object> reqMap = new HashMap<>();
-        fileService.insertFile(params);
-        reqMap.put("resultCode",200);
-        return reqMap;
+    public String insertFile(@RequestParam("file")MultipartFile file) throws IOException, NoSuchAlgorithmException {
+
+        try {
+            String originFileName = file.getOriginalFilename();
+            String fileName = new MD5maker(originFileName).toString();
+
+            String savePath = System.getProperty("user.dir") + "\\files";
+            System.out.println("savePath : "+savePath);
+            if (!new File(savePath).exists()) {
+                try {
+                    new File(savePath).mkdir();
+                } catch (Exception e) {
+                    e.getStackTrace();
+                }
+            }
+            String filePath = savePath + "\\" + fileName;
+            file.transferTo(new File(filePath));
+
+            FileDTO fileDTO = new FileDTO();
+            fileDTO.setFileName(originFileName);
+            fileDTO.setFilePath(fileName);
+
+            Long fileId = fileService.saveFile(fileDTO);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return "redireact:/";
     }
 }
