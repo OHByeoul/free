@@ -28,7 +28,7 @@ public class FileController {
             String fileName = new MD5maker(originFileName).toString();
 
             String savePath = System.getProperty("user.dir") + "\\files";
-            System.out.println("savePath : "+savePath);
+
             if (!new File(savePath).exists()) {
                 try {
                     new File(savePath).mkdir();
@@ -40,13 +40,14 @@ public class FileController {
             file.transferTo(new File(filePath));
 
             FileDTO fileDTO = new FileDTO();
-            fileDTO.setFileName(originFileName);
-            fileDTO.setFilePath(fileName);
+            fileDTO.setOriginFileName(originFileName);
+            fileDTO.setFileName(fileName);
+            fileDTO.setFilePath(filePath);
 
             Long fileId = fileService.saveFile(fileDTO);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return "redireact:/";
+        return "redirect:/";
     }
 }
