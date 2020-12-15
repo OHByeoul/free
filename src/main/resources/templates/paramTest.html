@@ -1,0 +1,65 @@
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>ParamTest</title>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+</head>
+<body>
+    <h1>파라미터 테스트</h1>
+    <table>
+        <th> 테스트 </th>
+        <tr>
+           <td>
+               <div class="managerList">
+                   <input type="text" id ="managerName" name="managerName" >
+                   <input type="text" id ="managerAge" name="managerAge">
+                   <input type="text" id ="managerHobby" name="managerHobby">
+               </div>
+               <div class="managerList">
+                   <input type="text" id ="managerName" name="managerName">
+                   <input type="text" id ="managerAge" name="managerAge">
+                   <input type="text" id ="managerHobby" name="managerHobby">
+               </div>
+               <div class="managerList">
+                   <input type="text" name="managerName" id ="managerName">
+                   <input type="text" name="managerAge" id ="managerAge">
+                   <input type="text" name="managerHobby" id ="managerHobby">
+               </div>
+           </td>
+        </tr>
+    </table>
+    <input type="button" onclick="ajaxCall()">
+    <script>
+
+//let len = $('.managerList').length;
+let array = new Array();
+let obj = new Object();
+let param = new Object();
+
+function setInitValue(){
+    $.each($('.managerList'), function(i,data){
+        obj.managerName = $(data).find('#managerName').val()
+        obj.managerAge = $(data).find('#managerAge').val()
+        obj.managerHobby = $(data).find('#managerHobby').val()
+        array.push(obj);
+    });
+
+    param.managerList  =  array;
+}
+debugger;
+function ajaxCall(){
+    setInitValue();
+    $.ajax({
+        url : '/arrayParamTest'
+        ,type : 'post'
+        ,data : param
+    }).done(function(succ){
+        console.log('succc')
+    }).fail(function(){
+            console.log('fail')
+    });
+ }
+</script>
+</body>
+
+</html>

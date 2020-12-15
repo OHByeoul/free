@@ -11,4 +11,9 @@ public class HelloController {
         return "/file";
     }
 
+    @GetMapping("/test")
+    public String paramTestView(Model model){
+        return "/paramTest";
+    }
+
 }
